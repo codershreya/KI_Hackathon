@@ -1,28 +1,27 @@
-"""Roof image analysis using Claude Vision (multimodal)."""
+"""Roof image analysis using Gemini Vision (multimodal)."""
 from __future__ import annotations
 
 import base64
 import os
 
-import anthropic
+from google import genai
 
 
-def _get_client() -> anthropic.Anthropic:
-    return anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+def _get_client() -> genai.Client:
+    return genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 
 async def analyze_roof_image(image_bytes: bytes, media_type: str = "image/jpeg") -> dict:
     """
-    Send a roof photo to Claude Vision for analysis.
+    Send a roof photo to Gemini Vision for analysis.
     Returns a structured dict with roof score, area estimate, orientation, shading notes.
     Falls back to a neutral result if no API key is available.
     """
-    api_key = os.getenv("ANTHROPIC_API_KEY")
+    api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
         return _fallback_result()
 
     client = _get_client()
-    b64 = base64.standard_b64encode(image_bytes).decode("utf-8")
 
     prompt = """Analysiere dieses Dachfoto für eine Photovoltaik-Planung.
 
@@ -42,28 +41,17 @@ Bewertungskriterien:
 - Dachzustand und freie nutzbare Fläche
 - Komplexität der Dachgeometrie"""
 
-    message = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=512,
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "image",
-                        "source": {
-                            "type": "base64",
-                            "media_type": media_type,
-                            "data": b64,
-                        },
-                    },
-                    {"type": "text", "text": prompt},
-                ],
-            }
+    image_data = base64.standard_b64encode(image_bytes).decode("utf-8")
+
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=[
+            {"mime_type": media_type, "data": image_data},
+            prompt,
         ],
     )
 
-    raw = "".join(b.text for b in message.content if b.type == "text")
+    raw = response.text
 
     import json
     try:

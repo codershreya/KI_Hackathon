@@ -1,11 +1,11 @@
-"""LLM service — port of services/llmService.ts using Anthropic Python SDK."""
+"""LLM service — port of services/llmService.ts using Google Gemini SDK."""
 from __future__ import annotations
 
 import json
 import os
 from typing import Any, Dict, Optional
 
-import anthropic
+from google import genai
 
 from app.models import (
     AssessmentResult,
@@ -21,11 +21,11 @@ from app.models import (
     TrafficLight,
 )
 
-MODEL = "claude-sonnet-4-6"
+MODEL = "gemini-2.5-flash"
 
 
-def _get_client() -> anthropic.Anthropic:
-    return anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+def _get_client() -> genai.Client:
+    return genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 
 def _build_system_prompt() -> str:
@@ -172,22 +172,21 @@ async def call_assessment_llm(
     operator: Optional[GridOperator],
     chunks: list[RetrievedChunk],
 ) -> Dict[str, Any]:
-    """Call the Anthropic LLM and return a parsed assessment dict."""
+    """Call the Gemini LLM and return a parsed assessment dict."""
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        return _build_fallback_result()
+
     client = _get_client()
     system_prompt = _build_system_prompt()
     user_message = _build_user_message(inp, tech, operator, chunks)
 
-    message = client.messages.create(
+    response = client.models.generate_content(
         model=MODEL,
-        max_tokens=4096,
-        temperature=0.1,
-        system=system_prompt,
-        messages=[{"role": "user", "content": user_message}],
+        contents=f"{system_prompt}\n\n{user_message}",
     )
 
-    raw_text = "".join(
-        block.text for block in message.content if block.type == "text"
-    )
+    raw_text = response.text
 
     try:
         parsed = _parse_assessment(raw_text)
@@ -205,23 +204,19 @@ async def answer_chat_question(
     question: str,
     context: Dict[str, Any],
 ) -> Dict[str, Any]:
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        return {"answer": "Chat nicht verfügbar — bitte API-Key prüfen.", "sources": []}
+
     client = _get_client()
-    message = client.messages.create(
+    system_prompt = (
+        "You are a German solar PV regulatory expert. Answer concisely in German. "
+        "Always cite your sources with §-references. End with a disclaimer that this is not legal advice."
+    )
+
+    response = client.models.generate_content(
         model=MODEL,
-        max_tokens=1024,
-        temperature=0.1,
-        system=(
-            "You are a German solar PV regulatory expert. Answer concisely in German. "
-            "Always cite your sources with §-references. End with a disclaimer that this is not legal advice."
-        ),
-        messages=[
-            {
-                "role": "user",
-                "content": f"Project context: {json.dumps(context)}\n\nQuestion: {question}",
-            }
-        ],
+        contents=f"{system_prompt}\n\nProject context: {json.dumps(context)}\n\nQuestion: {question}",
     )
-    answer = "".join(
-        block.text for block in message.content if block.type == "text"
-    )
-    return {"answer": answer, "sources": []}
+
+    return {"answer": response.text, "sources": []}

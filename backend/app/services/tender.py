@@ -5,13 +5,13 @@ import json
 import os
 from typing import Any, Dict
 
-import anthropic
+from google import genai
 
 from app.models import AssessmentResult
 
 
-def _get_client() -> anthropic.Anthropic:
-    return anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+def _get_client() -> genai.Client:
+    return genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 
 def _build_fallback_tender(assessment: AssessmentResult) -> Dict[str, Any]:
@@ -55,7 +55,7 @@ Mit freundlichen Grüßen"""
 
 async def generate_tender(assessment: AssessmentResult) -> Dict[str, Any]:
     """Generate a structured installer tender brief from an assessment."""
-    api_key = os.getenv("ANTHROPIC_API_KEY")
+    api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
         return _build_fallback_tender(assessment)
 
@@ -86,14 +86,12 @@ Antworte NUR mit gültigem JSON (kein Markdown):
   }}
 }}"""
 
-    message = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=1500,
-        temperature=0.3,
-        messages=[{"role": "user", "content": prompt}],
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=prompt,
     )
 
-    raw = "".join(b.text for b in message.content if b.type == "text")
+    raw = response.text
     try:
         cleaned = raw.strip().lstrip("```json").lstrip("```").rstrip("```").strip()
         return json.loads(cleaned)
