@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { AssessmentResult } from '../../types';
-import { downloadPdf } from '../../api/client';
+import { downloadPdf, generateTender } from '../../api/client';
+import type { TenderResult } from '../../types';
 
 interface Props {
   result: AssessmentResult | null;
@@ -16,6 +17,8 @@ function renderBold(text: string) {
 export default function ExportTab({ result }: Props) {
   const [pdfReady, setPdfReady] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [tender, setTender] = useState<TenderResult | null>(null);
+  const [tenderLoading, setTenderLoading] = useState(false);
 
   async function handleDownload() {
     if (!result) return;
@@ -23,7 +26,7 @@ export default function ExportTab({ result }: Props) {
     try {
       let blob: Blob;
       try {
-        blob = await downloadPdf(result.projectId);
+        blob = await downloadPdf(result.projectId, result);
       } catch {
         // Backend not available — simulate delay
         await new Promise((r) => setTimeout(r, 800));
@@ -39,6 +42,24 @@ export default function ExportTab({ result }: Props) {
       setPdfReady(true);
     } finally {
       setDownloading(false);
+    }
+  }
+
+  async function handleTender() {
+    if (!result) return;
+    setTenderLoading(true);
+    try {
+      const t = await generateTender(result.projectId, result);
+      setTender(t);
+    } catch {
+      // Fallback — generate basic tender from assessment data
+      setTender({
+        tenderText: result.installerQuestions.join('\n'),
+        suggestedQuestions: result.installerQuestions,
+        technicalSpecs: { estimatedKwp: result.technicalSummary.estimatedKwp },
+      });
+    } finally {
+      setTenderLoading(false);
     }
   }
 
@@ -107,6 +128,59 @@ export default function ExportTab({ result }: Props) {
             </>
           )}
         </button>
+      </div>
+
+      {/* Tender / Installer Request */}
+      <div className="pbox" style={{ marginTop: 10 }}>
+        <div style={{ fontSize: 12, fontWeight: 500, marginBottom: 3 }}>
+          <i className="ti ti-building-store" style={{ fontSize: 13, verticalAlign: -1, marginRight: 5 }} />
+          Angebotsanfrage (KI-generiert)
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--color-text-secondary)', marginBottom: 10 }}>
+          Strukturierte Anfrage an Installationsbetriebe — mit technischen Eckdaten und offenen Fragen
+        </div>
+        {!tender ? (
+          <button className="pdlbtn" onClick={handleTender} disabled={tenderLoading}>
+            {tenderLoading ? (
+              <>
+                <i className="ti ti-loader-2" style={{ fontSize: 13, verticalAlign: -1, marginRight: 5 }} /> Erstelle Anfrage…
+              </>
+            ) : (
+              <>
+                <i className="ti ti-sparkles" style={{ fontSize: 13, verticalAlign: -1, marginRight: 5 }} /> Angebotsanfrage erstellen
+              </>
+            )}
+          </button>
+        ) : (
+          <div>
+            <textarea
+              readOnly
+              value={tender.tenderText}
+              style={{
+                width: '100%',
+                minHeight: 120,
+                fontSize: 10,
+                fontFamily: 'monospace',
+                border: '0.5px solid var(--color-border)',
+                borderRadius: 'var(--border-radius-sm)',
+                padding: 8,
+                resize: 'vertical',
+                background: 'var(--color-background-secondary)',
+                color: 'var(--color-text-primary)',
+              }}
+            />
+            <button
+              className="pdlbtn"
+              style={{ marginTop: 6 }}
+              onClick={() => {
+                navigator.clipboard.writeText(tender.tenderText);
+              }}
+            >
+              <i className="ti ti-copy" style={{ fontSize: 12, verticalAlign: -1, marginRight: 4 }} />
+              Text kopieren
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="disc">

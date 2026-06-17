@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { useStore } from '../../store/useStore';
-import { CANNED_RESPONSES } from '../../data/mockAssessment';
+import { sendChatMessage } from '../../api/client';
 import type { AssessmentResult } from '../../types';
 
 interface Props {
@@ -21,9 +21,10 @@ const QUICK_QUESTIONS = [
   { label: 'Einspeisevergütung?', question: 'Wie hoch ist meine Einspeisevergütung?' },
 ];
 
-const DISCLAIMER = '<span style="font-size:10px;color:var(--color-text-tertiary)">⚠️ Ersetzt keine Rechtsberatung.</span>';
+const DISCLAIMER =
+  '<span style="font-size:10px;color:var(--color-text-tertiary)">⚠️ Ersetzt keine Rechtsberatung.</span>';
 
-export default function ChatTab({ onSwitchToChat }: Props) {
+export default function ChatTab({ result, onSwitchToChat }: Props) {
   const { addChatMessage } = useStore();
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -37,14 +38,25 @@ export default function ChatTab({ onSwitchToChat }: Props) {
         '<strong>1. MaStR-Registrierung</strong><br>' +
         'Binnen 1 Monat nach Inbetriebnahme (marktstammdatenregister.de)<br>' +
         '<span style="font-size:10px;color:var(--color-text-secondary)">📖 §§3 Nr.1, 5 MaStRV · 🟢 Aktuell seit 01.07.2017</span><br><br>' +
-        '<strong>2. Netzanmeldung bei Avacon AG</strong><br>' +
+        '<strong>2. Netzanmeldung beim Netzbetreiber</strong><br>' +
         'Mindestens 4 Wochen vor Installation<br>' +
-        '<span style="font-size:10px;color:var(--color-text-secondary)">📖 §13 NAV · 🟢 Aktuell · netz@avacon.de</span><br><br>' +
+        '<span style="font-size:10px;color:var(--color-text-secondary)">📖 §13 NAV · 🟢 Aktuell</span><br><br>' +
         DISCLAIMER,
     },
   ]);
   const [input, setInput] = useState('');
+  const [isWaiting, setIsWaiting] = useState(false);
   const chatRef = useRef<HTMLDivElement>(null);
+
+  const projectId = result?.projectId ?? 'demo';
+  const projectContext = result
+    ? {
+        address: (result as any).address,
+        technicalSummary: result.technicalSummary,
+        trafficLight: result.trafficLight,
+        gridOperator: result.gridOperator,
+      }
+    : {};
 
   function scrollToBottom() {
     setTimeout(() => {
@@ -58,40 +70,48 @@ export default function ChatTab({ onSwitchToChat }: Props) {
     scrollToBottom();
   }
 
-  function handleQuickQuestion(question: string) {
+  async function askQuestion(question: string) {
     onSwitchToChat();
     addMessage('user', question);
-    const answer = CANNED_RESPONSES[question];
-    setTimeout(() => {
+    setIsWaiting(true);
+
+    try {
+      const { answer } = await sendChatMessage(projectId, question, projectContext);
+      // Convert newlines to <br> and wrap in disclaimer
+      const html = answer.replace(/\n/g, '<br>') + '<br><br>' + DISCLAIMER;
+      addMessage('assistant', html);
+    } catch {
+      // Fallback when API key is not configured
       addMessage(
         'assistant',
-        (answer ?? 'Ich suche in der Wissensbasis…<br><span style="font-size:10px">→ EEG · EnWG · VDE-AR-N 4105 · MaStRV</span>') +
-          '<br><br>' +
+        '<span style="color:var(--color-text-secondary);font-style:italic">' +
+          'Suche in Regulierungsdatenbank…<br>' +
+          '<span style="font-size:10px">→ EEG · EnWG · VDE-AR-N 4105 · MaStRV</span>' +
+          '</span><br><br>' +
           DISCLAIMER
       );
-    }, 350);
+    } finally {
+      setIsWaiting(false);
+    }
   }
 
   function handleSend() {
     const q = input.trim();
-    if (!q) return;
+    if (!q || isWaiting) return;
     setInput('');
-    addMessage('user', q);
-    setTimeout(() => {
-      addMessage(
-        'assistant',
-        '<span style="color:var(--color-text-secondary);font-style:italic">Suche in Regulierungsdatenbank…<br>' +
-          '<span style="font-size:10px">→ EEG · EnWG · VDE-AR-N 4105 · MaStRV</span></span><br><br>' +
-          DISCLAIMER
-      );
-    }, 400);
+    askQuestion(q);
   }
 
   return (
     <>
       <div className="qbtns">
         {QUICK_QUESTIONS.map(({ label, question }) => (
-          <button key={label} className="qb" onClick={() => handleQuickQuestion(question)}>
+          <button
+            key={label}
+            className="qb"
+            onClick={() => askQuestion(question)}
+            disabled={isWaiting}
+          >
             {label}
           </button>
         ))}
@@ -109,6 +129,14 @@ export default function ChatTab({ onSwitchToChat }: Props) {
             />
           </div>
         ))}
+        {isWaiting && (
+          <div className="cm">
+            <div className="cb cba" style={{ fontStyle: 'italic', color: 'var(--color-text-secondary)', fontSize: 11 }}>
+              <i className="ti ti-loader-2" style={{ fontSize: 12, verticalAlign: -1, marginRight: 4 }} />
+              Suche in Regulierungsdatenbank…
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="cir">
@@ -118,17 +146,20 @@ export default function ChatTab({ onSwitchToChat }: Props) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+          disabled={isWaiting}
         />
         <button
           onClick={handleSend}
+          disabled={isWaiting}
           style={{
             padding: '0 12px',
             background: '#1a472a',
             color: 'white',
             border: 'none',
             borderRadius: 'var(--border-radius-md)',
-            cursor: 'pointer',
+            cursor: isWaiting ? 'not-allowed' : 'pointer',
             fontSize: 12,
+            opacity: isWaiting ? 0.6 : 1,
           }}
           aria-label="Senden"
         >

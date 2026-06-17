@@ -101,3 +101,34 @@ export interface ChatMessage {
   content: string;
   timestamp: string;
 }
+
+// ── New API response types ────────────────────────────────────────────────────
+
+export interface GeocodeResult {
+  lat: number;
+  lng: number;
+  displayName: string;
+  gridOperator: GridOperator | null;
+}
+
+export interface IrradianceResult {
+  irradianceKwhPerKwp: number;
+  source: 'pvgis' | 'default';
+  region: string;
+}
+
+export interface RoofImageResult {
+  roofScoreEstimate: number;
+  estimatedAreaM2: number | null;
+  orientationHint: string | null;
+  shadingNotes: string[];
+  confidence: 'high' | 'medium' | 'low';
+  notes: string[];
+}
+
+export interface TenderResult {
+  tenderText: string;
+  suggestedQuestions: string[];
+  technicalSpecs: Record<string, unknown>;
+}
+

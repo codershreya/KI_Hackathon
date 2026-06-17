@@ -1,0 +1,43 @@
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+*.log
+
+# Environment Variables
+.env
+.env.*
+!.env.example
+
+# Frontend (Node.js / React)
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/build/
+frontend/.npm/
+frontend/.vite/
+frontend/coverage/
+
+# Backend (Python / FastAPI)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+backend/env/
+backend/venv/
+backend/.venv/
+backend/pip-log.txt
+backend/pip-delete-this-directory.txt
+backend/.pytest_cache/
+backend/.coverage
+backend/htmlcov/
+backend/chroma_db/
+backend/chroma/
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

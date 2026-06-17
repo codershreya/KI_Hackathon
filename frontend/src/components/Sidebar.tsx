@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { useStore } from '../store/useStore';
 import type { BuildingType, Orientation } from '../types';
+import { analyzeRoofImage, geocodeAddress } from '../api/client';
 
 interface Props {
   onAnalyze: () => void;
@@ -21,15 +22,46 @@ const ORIENTATIONS: { value: Orientation; label: string }[] = [
 export default function Sidebar({ onAnalyze, isAnalyzing, analyzed }: Props) {
   const { projectInput, setProjectInput } = useStore();
   const [photoName, setPhotoName] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [geoInfo, setGeoInfo] = useState<{ displayName?: string; operatorName?: string; loading?: boolean } | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   function toggleComponent(key: 'planStorage' | 'planWallbox' | 'planHeatPump') {
     setProjectInput({ [key]: !projectInput[key] });
   }
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleAddressBlur() {
+    if (!projectInput.address || projectInput.address.length < 3) return;
+    setGeoInfo({ loading: true });
+    try {
+      const res = await geocodeAddress(projectInput.address);
+      setGeoInfo({
+        displayName: res.displayName,
+        operatorName: res.gridOperator ? res.gridOperator.name : 'Unbekannt',
+      });
+    } catch {
+      setGeoInfo({ displayName: 'Adresse nicht gefunden', operatorName: 'Unbekannt' });
+    }
+  }
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    if (file) setPhotoName(file.name);
+    if (!file) return;
+    setPhotoName(file.name);
+    setIsUploading(true);
+    try {
+      const res = await analyzeRoofImage(file);
+      const updates: any = {};
+      if (res.estimatedAreaM2) updates.roofAreaM2 = res.estimatedAreaM2;
+      if (res.orientationHint) updates.roofOrientation = res.orientationHint as Orientation;
+      if (Object.keys(updates).length > 0) {
+        setProjectInput(updates);
+      }
+    } catch (err) {
+      console.warn('Roof image analysis failed', err);
+    } finally {
+      setIsUploading(false);
+    }
   }
 
   return (
@@ -43,7 +75,20 @@ export default function Sidebar({ onAnalyze, isAnalyzing, analyzed }: Props) {
         type="text"
         value={projectInput.address}
         onChange={(e) => setProjectInput({ address: e.target.value })}
+        onBlur={handleAddressBlur}
       />
+      {geoInfo && (
+        <div style={{ fontSize: 10, color: 'var(--color-text-secondary)', marginTop: -6, marginBottom: 12, lineHeight: 1.3 }}>
+          {geoInfo.loading ? (
+            <><i className="ti ti-loader-2" style={{ verticalAlign: -1, marginRight: 4 }} />Lade Netzbetreiber...</>
+          ) : (
+            <>
+              <i className="ti ti-check" style={{ color: 'var(--color-text-success)', verticalAlign: -1, marginRight: 4 }} />
+              Netzbetreiber: <strong>{geoInfo.operatorName}</strong>
+            </>
+          )}
+        </div>
+      )}
 
       <div className="sl">Gebäudetyp</div>
       <select
@@ -150,7 +195,12 @@ export default function Sidebar({ onAnalyze, isAnalyzing, analyzed }: Props) {
         className="upload"
         onClick={() => fileRef.current?.click()}
       >
-        {photoName ? (
+        {isUploading ? (
+          <>
+            <i className="ti ti-loader-2" style={{ fontSize: 14, display: 'block', marginBottom: 2 }} />
+            Lade…
+          </>
+        ) : photoName ? (
           <>
             <i className="ti ti-check" style={{ fontSize: 14, display: 'block', marginBottom: 2 }} />
             {photoName}
