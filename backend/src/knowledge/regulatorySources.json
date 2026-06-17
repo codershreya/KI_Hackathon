@@ -1,0 +1,122 @@
+[
+  {
+    "id": "mastr-rv",
+    "title": "Marktstammdatenregister-Verordnung — Registrierungspflicht",
+    "source": "MaStRV §§3 Nr.1, 5",
+    "sourceUrl": "https://www.gesetze-im-internet.de/mastrv/",
+    "version": "2017-07-01",
+    "validFrom": "2017-07-01",
+    "validUntil": null,
+    "status": "valid",
+    "tags": ["pv", "registration"],
+    "chunkText": "Betreiber von Solaranlagen (PV) sind verpflichtet, ihre Anlage innerhalb eines Monats nach Inbetriebnahme im Marktstammdatenregister (MaStR) zu registrieren. Die Registrierung erfolgt kostenfrei unter marktstammdatenregister.de. Pflicht gilt ab dem 01.07.2017 für alle neuen Anlagen. Verstöße können mit Bußgeldern geahndet werden."
+  },
+  {
+    "id": "estg-3-72",
+    "title": "§3 Nr.72 EStG — Steuerbefreiung PV bis 30 kWp",
+    "source": "§3 Nr.72 EStG",
+    "sourceUrl": "https://www.gesetze-im-internet.de/estg/__3.html",
+    "version": "2023-01-01",
+    "validFrom": "2023-01-01",
+    "validUntil": null,
+    "status": "valid",
+    "tags": ["pv", "tax"],
+    "chunkText": "Einnahmen aus dem Betrieb von PV-Anlagen bis 30 kWp auf Einfamilienhäusern und Gebäuden, die nicht Wohnzwecken dienen, sowie bis 15 kWp je Wohn- und Gewerbeeinheit bei anderen Gebäuden (max. 100 kWp) sind seit dem 01.01.2023 steuerfrei (§3 Nr.72 EStG). Dies umfasst Einspeisevergütungen, Eigenverbrauch und Direktlieferungen. Kein Antrag erforderlich, gilt automatisch. Gewerbesteuer entfällt ebenfalls."
+  },
+  {
+    "id": "nav-13",
+    "title": "§13 NAV — Netzanmeldung vor Installation",
+    "source": "§13 Niederspannungsanschlussverordnung (NAV)",
+    "sourceUrl": "https://www.gesetze-im-internet.de/nav/",
+    "version": "2006-11-01",
+    "validFrom": "2006-11-01",
+    "validUntil": null,
+    "status": "valid",
+    "tags": ["pv", "registration"],
+    "chunkText": "Vor der Errichtung einer Erzeugungsanlage (z.B. PV) muss der Anschlussnehmer die Anlage beim Netzbetreiber anmelden. Die Anmeldung muss spätestens 4 Wochen vor dem geplanten Anschluss erfolgen. Der Netzbetreiber prüft die technische Verträglichkeit und erteilt eine Zustimmung oder gibt Auflagen. Ohne Zustimmung darf die Anlage nicht in Betrieb genommen werden."
+  },
+  {
+    "id": "vde-arn-4105",
+    "title": "VDE-AR-N 4105 — Technische Anschlussbedingungen Niederspannung",
+    "source": "VDE-AR-N 4105:2018-11",
+    "sourceUrl": "https://www.vde-verlag.de/normen/0100474/vde-ar-n-4105-2018-11.html",
+    "version": "2018-11-01",
+    "validFrom": "2018-11-01",
+    "validUntil": null,
+    "status": "valid",
+    "tags": ["pv", "technical"],
+    "chunkText": "PV-Anlagen am Niederspannungsnetz müssen die VDE-AR-N 4105 erfüllen. Kernpunkte: (1) 70%-Wirkleistungsbegrenzung: Einspeiseleistung wird auf 70% der installierten PV-Leistung begrenzt, sofern kein intelligentes Messsystem (Smart Meter Gateway) installiert ist. (2) Entkupplungsschutz und Netzschutz müssen konform sein. (3) Der Wechselrichter muss zertifiziert und zugelassen sein. Gilt für alle Neuanlagen seit November 2018."
+  },
+  {
+    "id": "enwg-14a",
+    "title": "§14a EnWG — Steuerbare Verbrauchseinrichtungen (Wallbox, Wärmepumpe)",
+    "source": "§14a EnWG",
+    "sourceUrl": "https://www.gesetze-im-internet.de/enwg_2005/__14a.html",
+    "version": "2024-01-01",
+    "validFrom": "2024-01-01",
+    "validUntil": null,
+    "status": "valid",
+    "tags": ["wallbox", "heat_pump", "registration"],
+    "chunkText": "Seit dem 01.01.2024 gilt §14a EnWG für neue steuerbare Verbrauchseinrichtungen über 3,7 kW Anschlussleistung (z.B. Wallboxen, Wärmepumpen). Betreiber müssen: (1) Die Anlage beim Netzbetreiber anmelden. (2) Eine technische Steuerungsmöglichkeit (Dimmen oder Sperren durch den Netzbetreiber in Spitzenlastzeiten) einrichten. Als Gegenleistung erhalten Betreiber reduzierte Netzentgelte. Der Netzbetreiber darf die Leistung maximal auf 4,2 kW begrenzen, Vollsperrungen sind nicht erlaubt."
+  },
+  {
+    "id": "eeg-2023-21",
+    "title": "§21 EEG 2023 — Einspeisevergütung",
+    "source": "§21 EEG 2023",
+    "sourceUrl": "https://www.gesetze-im-internet.de/eeg_2014/__21.html",
+    "version": "2023-01-01",
+    "validFrom": "2023-01-01",
+    "validUntil": null,
+    "status": "valid",
+    "tags": ["pv", "feed-in"],
+    "chunkText": "Die Einspeisevergütung (EEG 2023, §21) für neue PV-Anlagen beträgt: Anlagen bis 10 kWp: 8,2 Cent/kWh (Volleinspeisung: 13,0 ct/kWh). 10–40 kWp: 7,1 ct/kWh. 40–100 kWp: 5,8 ct/kWh. Die Vergütung wird für 20 Jahre ab Inbetriebnahme gewährt. Halbjährliche Degression von 1%. Für Anlagen ab 100 kWp ist eine Ausschreibung erforderlich."
+  },
+  {
+    "id": "kfw-270",
+    "title": "KfW 270 — Erneuerbare Energien Standard (Kredit)",
+    "source": "KfW Programm 270",
+    "sourceUrl": "https://www.kfw.de/inlandsfoerderung/Unternehmen/Energie-Umwelt/Finanzierungsangebote/Erneuerbare-Energien-Standard-(270)/",
+    "version": "2024-01-01",
+    "validFrom": "2016-01-01",
+    "validUntil": null,
+    "status": "valid",
+    "tags": ["pv", "storage", "funding"],
+    "chunkText": "KfW Programm 270 (Erneuerbare Energien Standard): Kredit bis 150 Millionen EUR für Photovoltaik, Windkraft, Speicher und andere erneuerbare Energieanlagen. Für Privatpersonen typischerweise bis 50.000 EUR. Laufzeit 5–30 Jahre. Günstige Zinsen (tilgungsfreie Anlaufjahre möglich). Antrag über Hausbank VOR Beauftragung stellen! KfW zahlt direkt an den Kreditnehmer."
+  },
+  {
+    "id": "kfw-442",
+    "title": "KfW 442 — Heimspeicher (Angekündigt)",
+    "source": "KfW Pressemitteilung 2025",
+    "sourceUrl": "https://www.kfw.de/",
+    "version": "2025-01-01",
+    "validFrom": "2026-01-01",
+    "validUntil": null,
+    "status": "announced",
+    "tags": ["storage", "funding"],
+    "chunkText": "KfW hat ein neues Förderprogramm 442 für Heimspeicher angekündigt (~300 EUR/kWh Investitionszuschuss). Das Programm ist noch NICHT aktiv. Kein Programmstart-Datum bestätigt. Nicht in Finanzplanungen einrechnen, da Konditionen und Verfügbarkeit unbekannt. Quelle: KfW Pressemitteilung, Stand 2025."
+  },
+  {
+    "id": "eeg-reform-2027",
+    "title": "EEG-Reform 2027 — Abschaffung fixer Einspeisevergütung (geplant)",
+    "source": "BMWK Referentenentwurf 2026",
+    "sourceUrl": "https://www.bmwk.de/",
+    "version": "2026-01-01",
+    "validFrom": "2027-01-01",
+    "validUntil": null,
+    "status": "announced",
+    "tags": ["pv", "feed-in"],
+    "chunkText": "Laut BMWK Referentenentwurf 2026 plant die Bundesregierung eine EEG-Reform ab 2027: Abschaffung der festen Einspeisevergütung für Neuanlagen; stattdessen marktorientierte Vergütung (Direktvermarktung). Bestehende Anlagen: Bestandsschutz für 20 Jahre nach Inbetriebnahme. Noch kein Gesetz verabschiedet. Parlamentarisches Verfahren steht aus."
+  },
+  {
+    "id": "bnetza-pv-faq",
+    "title": "Bundesnetzagentur — PV-Anlagen FAQ",
+    "source": "Bundesnetzagentur",
+    "sourceUrl": "https://www.bundesnetzagentur.de/DE/Vportal/Strom/Photovoltaik/start.html",
+    "version": "2024-01-01",
+    "validFrom": "2023-01-01",
+    "validUntil": null,
+    "status": "valid",
+    "tags": ["pv", "registration", "technical"],
+    "chunkText": "Bundesnetzagentur-FAQ zu PV-Anlagen: 1. Jede Anlage muss im MaStR registriert werden. 2. Netzanschluss nur nach Genehmigung durch Netzbetreiber. 3. Messkonzept: Eigenverbrauchsanlagen benötigen einen Zweirichtungszähler oder Summenzähler. 4. Technische Mindestanforderungen nach VDE-AR-N 4105. 5. Für Anlagen > 25 kWp: Direktvermarktungspflicht."
+  }
+]
