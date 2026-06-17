@@ -1,20 +1,29 @@
 import { create } from 'zustand';
-import type { ProjectInput, AssessmentResult, ChatMessage } from '../types';
+import type {
+  ProjectInput,
+  AssessmentResult,
+  ChatMessage,
+  SystemOption,
+} from '../types';
 
 interface AppState {
   projectInput: ProjectInput;
   assessmentResult: AssessmentResult | null;
   isAnalyzing: boolean;
   analyzed: boolean;
-  activeTab: 'ov' | 'ch' | 'ex';
+  activeTab: 'ov' | 'ai' | 'ex';
   chatMessages: ChatMessage[];
+  selectedSourceId: string | null;
+  selectedOption: SystemOption | null;
 
   setProjectInput: (input: Partial<ProjectInput>) => void;
   setAssessmentResult: (result: AssessmentResult | null) => void;
   setIsAnalyzing: (v: boolean) => void;
   setAnalyzed: (v: boolean) => void;
-  setActiveTab: (tab: 'ov' | 'ch' | 'ex') => void;
+  setActiveTab: (tab: 'ov' | 'ai' | 'ex') => void;
   addChatMessage: (msg: ChatMessage) => void;
+  setSelectedSourceId: (id: string | null) => void;
+  setSelectedOption: (option: SystemOption | null) => void;
 }
 
 const defaultInput: ProjectInput = {
@@ -41,6 +50,8 @@ export const useStore = create<AppState>((set) => ({
   analyzed: false,
   activeTab: 'ov',
   chatMessages: [],
+  selectedSourceId: null,
+  selectedOption: null,
 
   setProjectInput: (input) =>
     set((s) => ({ projectInput: { ...s.projectInput, ...input } })),
@@ -50,4 +61,6 @@ export const useStore = create<AppState>((set) => ({
   setActiveTab: (tab) => set({ activeTab: tab }),
   addChatMessage: (msg) =>
     set((s) => ({ chatMessages: [...s.chatMessages, msg] })),
+  setSelectedSourceId: (id) => set({ selectedSourceId: id }),
+  setSelectedOption: (option) => set({ selectedOption: option }),
 }));

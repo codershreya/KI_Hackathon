@@ -4,7 +4,7 @@ export default function Header() {
       <i className="ti ti-sun" style={{ fontSize: 18 }} aria-hidden />
       <div>
         <div style={{ fontSize: 13, fontWeight: 500 }}>Plankton PV Assistant</div>
-        <div style={{ fontSize: 10, opacity: 0.7 }}>Welche Regeln gelten wirklich?</div>
+        <div style={{ fontSize: 10, opacity: 0.7 }}>What rules really apply?</div>
       </div>
       <div style={{ marginLeft: 'auto', fontSize: 10, opacity: 0.6 }}>
         KI-Hackathon Energie 2026

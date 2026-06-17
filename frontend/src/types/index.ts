@@ -83,11 +83,38 @@ export interface TechnicalSummary {
   notes: string[];
 }
 
+export interface OptionRatings {
+  technicalEfficiency: number;
+  runningEfficiency: number;
+  economicValue: number;
+  regulatorySimplicity: number;
+  futureReadiness: number;
+}
+
+export interface SystemOption {
+  label: 'A' | 'B' | 'C';
+  name: string;
+  tagline: string;
+  pvKwp: number;
+  batteryKwh: number;
+  inverterKw: number;
+  wallboxCompatible: boolean;
+  heatPumpCompatible: boolean;
+  ratings: OptionRatings;
+  estimatedInvestmentMin: number;
+  estimatedInvestmentMax: number;
+  estimatedAnnualProduction: number;
+  estimatedAnnualSavings: number;
+  selfConsumptionPct: number;
+  summary: string;
+}
+
 export interface AssessmentResult {
   projectId: string;
   generatedAt: string;
   gridOperator: GridOperator | null;
   technicalSummary: TechnicalSummary;
+  systemOptions: SystemOption[];
   regulatoryClaims: Claim[];
   subsidies: Subsidy[];
   openPoints: string[];
@@ -100,4 +127,46 @@ export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
   timestamp: string;
+}
+
+export interface CollectedData {
+  buildingType?: string;
+  apartments?: number;
+  residents?: number;
+  annualKwhElec?: number;
+  roofAreaM2?: number;
+  roofOrientation?: string;
+  roofPitchDeg?: number;
+  address?: string;
+  budgetRange?: string;
+  estimatedKwp?: number;
+  annualYieldKwh?: number;
+  selfConsumptionPct?: number;
+  recommendedBatteryKwh?: number;
+}
+
+export interface RecommendationOption {
+  label: 'A' | 'B' | 'C';
+  name: string;
+  pvKwp: number;
+  batteryKwh: number;
+  inverterKw: number;
+  annualKwh: number;
+  selfConsumptionPct: number;
+  pros: string[];
+  cons: string[];
+  investmentMin: number;
+  investmentMax: number;
+  suitabilityScore: number;
+  description: string;
+}
+
+export interface ConsultationResponse {
+  message: string;
+  phase: number;
+  phaseLabel: string;
+  collectedData: CollectedData;
+  options: RecommendationOption[] | null;
+  reportReady: boolean;
+  sessionId: string;
 }

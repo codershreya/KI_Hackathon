@@ -8,6 +8,7 @@ import gridOperatorRouter from './routes/gridoperator';
 import sourcesRouter from './routes/sources';
 import exportRouter from './routes/export';
 import chatRouter from './routes/chat';
+import consultationRouter from './routes/consultation';
 
 const app = express();
 const PORT = process.env.PORT ?? 3001;
@@ -30,6 +31,7 @@ app.use('/api/gridoperator', gridOperatorRouter);
 app.use('/api/sources', sourcesRouter);
 app.use('/api/export', exportRouter);
 app.use('/api/chat', chatRouter);
+app.use('/api/consultation', consultationRouter);
 
 app.get('/api/health', (_req, res) => res.json({ status: 'ok', ts: new Date().toISOString() }));
 

@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { v4 as uuid } from 'uuid';
 import type { ProjectInput } from '../types';
 import { runAssessmentPipeline } from '../services/assessmentPipeline';
+import { saveAssessment, getAssessment } from '../services/assessmentStore';
 
 const router = Router();
 
@@ -16,6 +17,7 @@ router.post('/', async (req: Request, res: Response) => {
 
   try {
     const result = await runAssessmentPipeline(projectId, input);
+    saveAssessment(projectId, result);
     return res.json(result);
   } catch (err) {
     console.error('Assessment pipeline error:', err);
@@ -23,9 +25,12 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
-router.get('/:id', async (req: Request, res: Response) => {
-  // In production: look up from DB. For MVP, return 404.
-  return res.status(404).json({ error: 'Assessment not found (persistence not yet implemented)' });
+router.get('/:id', (req: Request, res: Response) => {
+  const result = getAssessment(req.params.id);
+  if (!result) {
+    return res.status(404).json({ error: 'Assessment not found' });
+  }
+  return res.json(result);
 });
 
 export default router;

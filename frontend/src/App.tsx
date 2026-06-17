@@ -5,14 +5,14 @@ import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import GridBar from './components/GridBar';
 import OverviewTab from './components/tabs/OverviewTab';
-import ChatTab from './components/tabs/ChatTab';
+import AIConsultantTab from './components/tabs/AIConsultantTab';
 import ExportTab from './components/tabs/ExportTab';
 
-type Tab = 'ov' | 'ch' | 'ex';
+type Tab = 'ov' | 'ai' | 'ex';
 
 const TAB_LABELS: { id: Tab; icon: string; label: string }[] = [
-  { id: 'ov', icon: 'ti-home', label: 'Übersicht' },
-  { id: 'ch', icon: 'ti-message', label: 'Chat' },
+  { id: 'ov', icon: 'ti-layout-grid', label: 'Overview' },
+  { id: 'ai', icon: 'ti-robot', label: 'AI Consultant' },
   { id: 'ex', icon: 'ti-file-description', label: 'Export & PDF' },
 ];
 
@@ -27,16 +27,17 @@ export default function App() {
     setIsAnalyzing,
     setAnalyzed,
     setActiveTab,
+    setSelectedOption,
   } = useStore();
 
   async function handleAnalyze() {
     setIsAnalyzing(true);
+    setSelectedOption(null);
     try {
       let result;
       try {
         result = await assess(projectInput);
       } catch {
-        // Fall back to mock data when backend is not available
         await new Promise((r) => setTimeout(r, 1200));
         result = MOCK_ASSESSMENT;
       }
@@ -81,8 +82,8 @@ export default function App() {
           <div style={{ display: activeTab === 'ov' ? 'block' : 'none' }}>
             <OverviewTab result={assessmentResult} />
           </div>
-          <div style={{ display: activeTab === 'ch' ? 'block' : 'none' }}>
-            <ChatTab result={assessmentResult} onSwitchToChat={() => setActiveTab('ch')} />
+          <div style={{ display: activeTab === 'ai' ? 'block' : 'none' }}>
+            <AIConsultantTab result={assessmentResult} />
           </div>
           <div style={{ display: activeTab === 'ex' ? 'block' : 'none' }}>
             <ExportTab result={assessmentResult} />

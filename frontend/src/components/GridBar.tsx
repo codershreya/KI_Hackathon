@@ -12,7 +12,7 @@ export default function GridBar({ operator, analyzed }: Props) {
       {operator ? (
         <>
           <span>
-            Netzbetreiber: <strong>{operator.name}</strong>
+            Network operator: <strong>{operator.name}</strong>
           </span>
           <span style={{ color: 'var(--color-text-tertiary)' }}>·</span>
           <span>
@@ -20,11 +20,11 @@ export default function GridBar({ operator, analyzed }: Props) {
           </span>
         </>
       ) : (
-        <span>Netzbetreiber wird ermittelt…</span>
+        <span>Determining network operator…</span>
       )}
       {analyzed && (
         <span style={{ marginLeft: 'auto', color: 'var(--color-text-success)', fontSize: 10 }}>
-          <i className="ti ti-check" style={{ fontSize: 12, verticalAlign: -1 }} aria-hidden /> Analysiert
+          <i className="ti ti-check" style={{ fontSize: 12, verticalAlign: -1 }} aria-hidden /> Analyzed
         </span>
       )}
     </div>
